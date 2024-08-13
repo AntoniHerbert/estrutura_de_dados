@@ -1,0 +1,263 @@
+####################################################################################
+Questão 1
+####################################################################################
+
+from Stack import Stack
+
+
+def printInstructions(op1, op2, c, register):
+    op = {
+        "*" : "MT",
+        "/" : "DV",
+        "+" : "AD",
+        "-" : "SB",
+    }
+
+    print(f"LD {op1}")
+    print(f"{op.get(c)} {op2}")
+    print(f"ST {register}")
+
+def writeInstructions(postfix):
+    stack = Stack()
+
+    for c in postfix:
+        if c in "*/+-":
+            op2 = stack.pop()
+            op1 = stack.pop()
+            TEMPn = "TEMP"+str(stack.count)
+            stack.push(TEMPn)
+            printInstructions(op1, op2, c, TEMPn)
+        else:
+            stack.push(c)
+
+
+writeInstructions("ABC*+DE-/")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################
+Questão 2
+####################################################################################
+
+def is_palindrome(string):
+    string = string.lower().replace(" ", "")
+    
+    stack = []
+    
+    for char in string[:len(string)//2]:
+        stack.append(char)
+    
+    if len(string) % 2 != 0:
+        # Se tiver, ignora o caractere central
+        string = string[len(string)//2 + 1:]
+    else:
+        string = string[len(string)//2:]
+    
+    for char in string:
+        if char != stack.pop():
+            return False
+    
+    return True
+
+print(is_palindrome("Ame a ema"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################
+Questão 3
+####################################################################################
+
+from queue import Queue
+
+def reorganize(pilha):
+    tamanho = len(pilha)
+    metade = tamanho // 2
+
+    fila1 = Queue()
+    fila2 = Queue()
+
+    for i in range(metade):
+        fila1.put(pilha[i])
+
+    for i in range(metade, tamanho):
+        fila2.put(pilha[i])
+
+    while not fila1.empty() or not fila2.empty():
+        if not fila1.empty():
+            print(fila1.get(), end=' ')
+        if not fila2.empty():
+            print(fila2.get(), end=' ')
+
+pilha = [1, 5, 9, 24, 56, 16, 53, 105]
+reorganize(pilha)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################
+Questão 4
+####################################################################################
+
+from Node import Node
+
+
+def morrisPreOrder(root):
+    current = root
+    while current:
+        if not current.left:
+            print(current.data)
+            current = current.right
+        else:
+            predecessor = current.left
+            while predecessor.right and predecessor.right != current:
+                predecessor = predecessor.right
+
+            if not predecessor.right:
+                predecessor.right = current
+                print(current.data)
+                current = current.left
+
+            else:
+                predecessor.right = None
+                current = current.right
+
+
+n = Node(2)
+n.left = Node(-3)
+n.right = Node(7)
+n.left.left = Node(5)
+n.left.right = Node(4)
+
+print(morrisPreOrder(n))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################
+Questão 5
+####################################################################################
+
+from Node import Node
+from util import Queue
+
+def nodeCount(root):
+    if not root:
+        return 0
+    return nodeCount(root.left) + nodeCount(root.right) + 1
+
+def searchMax(root):
+    q = Queue(nodeCount(root))
+    q.enqueue(root)
+    max_value = root.data
+    while not q.isEmpty():
+        node = q.dequeue()
+        if node.data > max_value:
+            max_value = node.data
+        if node.left:
+            q.enqueue(node.left)
+        if node.right:
+            q.enqueue(node.right)
+
+    return max_value
+
+def searchN(root, n):
+    if not root:
+        return False
+    
+    return root.data == n or searchN(root.left, n) or searchN(root.right, n)
+
+n = Node(2)
+n.left = Node(-3)
+n.right = Node(7)
+n.left.left = Node(5)
+
+print(nodeCount(n))
+print(searchMax(n))
+print(searchN(n, 7))
+print(searchN(n, 0))
+
